@@ -4,7 +4,8 @@ import "../global.css";
 
 export default function Index() {
   const { isSignedIn, isLoaded } = useAuth();
+
   if (!isLoaded) return null;
-  if (isSignedIn) return <Redirect href="/(root)/(tabs)" />;
-  else return <Redirect href="/(auth)/sign-in" />;
+  if (!isSignedIn) return <Redirect href="/(auth)/sign-in" />;
+  else return <Redirect href="/(root)/(tabs)" />;
 }
