@@ -74,7 +74,7 @@ export default function Onboarding() {
     }
 
     const { error: transectionError } = await authSupabase
-      .from("transections")
+      .from("transactions")
       .insert({
         user_id: user?.id,
         account_id: accountsData?.id,
