@@ -3,7 +3,7 @@ import { upsertBudget } from "@/lib/services/budgets";
 import { useUser } from "@clerk/expo";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export function useBudgetMutation() {
+export function useUpsertBudgetMutation() {
   const supabase = useSupabase();
   const { user } = useUser();
   const queryClient = useQueryClient();

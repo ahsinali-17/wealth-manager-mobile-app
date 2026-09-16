@@ -48,3 +48,41 @@ export async function getTransactions(
   }
   return (TransactionData as Transaction[]) || [];
 }
+
+export async function deleteTransaction(
+  client: SupabaseClient,
+  transaction_id: string,
+  accountId: string,
+  amount: number,
+  type: TransactionType,
+) {
+  const { error } = await client
+    .from("transactions")
+    .delete()
+    .eq("id", transaction_id);
+
+  if (error) return error;
+
+  const { data: accountData, error: AccountError } = await client
+    .from("accounts")
+    .select("balance")
+    .eq("id", accountId)
+    .single();
+
+  if (AccountError) return AccountError;
+
+  const { error: AccountUpdateError } = await client
+    .from("accounts")
+    .update({
+      balance:
+        type === "EXPENSE"
+          ? accountData.balance + amount
+          : accountData.balance - amount,
+    })
+    .eq("id", accountId)
+    .single();
+
+  if (AccountUpdateError) {
+    return AccountUpdateError;
+  }
+}

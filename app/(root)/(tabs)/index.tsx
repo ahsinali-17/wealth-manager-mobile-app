@@ -115,10 +115,11 @@ export default function index() {
     return Object.entries(map)
       .sort((a, b) => b[1] - a[1])
       .map(([key, value]) => {
+        const config = getCategoryConfig(key as CategoryKey);
         return {
           category: key as CategoryKey,
           amount: value,
-          color: getCategoryConfig(key as CategoryKey).color,
+          color: config.color,
         };
       });
   }, [monthTransactions]);
@@ -294,9 +295,9 @@ export default function index() {
                     return (
                       <View
                         key={c.category}
-                        className="flex-row items-center justify-between"
+                        className="flex-row items-center justify-between gap-3"
                       >
-                        <View className="flex-row items-center gap-3">
+                        <View className="flex-row items-center gap-2">
                           <View
                             className="w-2 h-2 rounded-full"
                             style={{ backgroundColor: c.color }}
@@ -314,7 +315,7 @@ export default function index() {
             </View>
 
             <View className="mt-3 mb-4 rounded-2xl bg-white border-muted border p-4">
-              <View className="flex-row justify-between items-center">
+              <View className="flex-row justify-between items-center mb-2">
                 <Text className="text-lg font-semibold text-brand-bg">
                   Recent Transeactions
                 </Text>

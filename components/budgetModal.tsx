@@ -1,5 +1,5 @@
 import { COLORS } from "@/constants/theme";
-import { useBudgetMutation } from "@/hooks/mutations/useBudgetMutations";
+import { useUpsertBudgetMutation } from "@/hooks/mutations/useBudgetMutations";
 import { Budget } from "@/lib/services/budgets";
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity } from "react-native";
@@ -20,7 +20,7 @@ export default function BudgetModal({
   const [amount, setAmount] = useState(budget?.amount.toString() || "");
   const [error, setError] = useState("");
 
-  const { mutateAsync, isPending } = useBudgetMutation();
+  const { mutateAsync, isPending } = useUpsertBudgetMutation();
 
   const handleSave = async () => {
     setError("");

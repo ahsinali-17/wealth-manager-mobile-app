@@ -80,7 +80,7 @@ export default function Onboarding() {
         account_id: accountsData?.id,
         amount: parseFloat(values.balance.replace(/,/g, "")),
         type: "INCOME",
-        category: "OTHER",
+        category: "other_income",
         description: "Opening Balance",
         date: new Date().toISOString(),
         input_method: "MANUAL",

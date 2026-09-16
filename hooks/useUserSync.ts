@@ -4,21 +4,23 @@ import { useEffect } from "react";
 import { useSupabase } from "./useSupabase";
 
 export const useUserSync = () => {
-  const { user } = useUser();
+  const { isLoaded, isSignedIn, user } = useUser();
   const setCurrency = useUserStore((s) => s.setCurrency);
   const setNeedsOnboarding = useUserStore((s) => s.setNeedsOnboarding);
   const authSupabase = useSupabase();
 
   useEffect(() => {
+    if (!isLoaded || !isSignedIn || !user?.id) return;
+
     async function syncUser() {
       try {
         const { data: userData, error: userError } = await authSupabase
           .from("users")
           .select("clerk_id, currency")
           .eq("clerk_id", user?.id)
-          .single();
+          .maybeSingle();
 
-        if (userError && userError?.code !== "PGRST116") {
+        if (userError) {
           console.log("Error fetching user data: ", userError);
           setNeedsOnboarding(true);
           return;
@@ -76,5 +78,5 @@ export const useUserSync = () => {
       }
     }
     syncUser();
-  }, [user?.id]);
+  }, [isLoaded, isSignedIn, user?.id]);
 };

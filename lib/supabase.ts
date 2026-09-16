@@ -12,9 +12,12 @@ export function createClerkSupabaseClient(
 ) {
   return createClient(supabaseUrl!, supabaseKey!, {
     accessToken: async () => {
-      const token = await getToken();
-      if (token) return token;
-      throw new Error("No token found");
+      try {
+        const token = await getToken();
+        return token ?? null;
+      } catch (e) {
+        return null;
+      }
     },
   });
 }
