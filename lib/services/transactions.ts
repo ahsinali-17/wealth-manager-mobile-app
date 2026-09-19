@@ -43,8 +43,7 @@ export async function getTransactions(
   );
 
   if (TransactionError) {
-    console.error("Error fetching transactions:", TransactionError);
-    throw TransactionError;
+    return { error: TransactionError };
   }
   return (TransactionData as Transaction[]) || [];
 }
@@ -61,7 +60,7 @@ export async function deleteTransaction(
     .delete()
     .eq("id", transaction_id);
 
-  if (error) return error;
+  if (error) return { error };
 
   const { data: accountData, error: AccountError } = await client
     .from("accounts")
@@ -69,7 +68,7 @@ export async function deleteTransaction(
     .eq("id", accountId)
     .single();
 
-  if (AccountError) return AccountError;
+  if (AccountError) return { AccountError };
 
   const { error: AccountUpdateError } = await client
     .from("accounts")
@@ -83,6 +82,54 @@ export async function deleteTransaction(
     .single();
 
   if (AccountUpdateError) {
-    return AccountUpdateError;
+    return { AccountUpdateError };
   }
+}
+
+export type NewTransaction = {
+  user_id: string;
+  account_id: string;
+  amount: number;
+  type: TransactionType;
+  category: CategoryKey;
+  input_method: Input_Method;
+  description: string | null;
+  date: string;
+  voice_transcript: string | null;
+};
+
+export async function addTransaction(
+  client: SupabaseClient,
+  payload: NewTransaction,
+) {
+  const { data: newTransaction, error: transactionError } = await client
+    .from("transactions")
+    .insert(payload)
+    .select()
+    .single();
+  if (transactionError) return { error: transactionError };
+
+  const { data: accData, error: accError } = await client
+    .from("accounts")
+    .select("balance")
+    .eq("id", payload.account_id)
+    .single();
+  if (accError) return { error: transactionError };
+
+  const { error: AccountUpdateError } = await client
+    .from("accounts")
+    .update({
+      balance:
+        payload.type === "EXPENSE"
+          ? accData.balance - payload.amount
+          : accData.balance + payload.amount,
+    })
+    .eq("id", payload.account_id)
+    .single();
+
+  if (AccountUpdateError) {
+    return { error: AccountUpdateError, data: null };
+  }
+
+  return { transaction: newTransaction as Transaction, error: null };
 }

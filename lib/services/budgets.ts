@@ -16,7 +16,7 @@ export async function getBudgets(client: SupabaseClient, user_id: string) {
     .eq("user_id", user_id)
     .maybeSingle();
 
-  if (error) throw error;
+  if (error) return { error };
   return (data as Budget) || null;
 }
 
@@ -30,6 +30,6 @@ export async function upsertBudget(
     .upsert({ user_id, amount }, { onConflict: "user_id" })
     .select()
     .single();
-  if (error) throw error;
+  if (error) return { error };
   return data as Budget;
 }
