@@ -43,7 +43,7 @@ export async function getTransactions(
   );
 
   if (TransactionError) {
-    return { error: TransactionError };
+    throw TransactionError;
   }
   return (TransactionData as Transaction[]) || [];
 }
@@ -107,14 +107,14 @@ export async function addTransaction(
     .insert(payload)
     .select()
     .single();
-  if (transactionError) return { error: transactionError };
+  if (transactionError) throw transactionError;
 
   const { data: accData, error: accError } = await client
     .from("accounts")
     .select("balance")
     .eq("id", payload.account_id)
     .single();
-  if (accError) return { error: transactionError };
+  if (accError) throw accError;
 
   const { error: AccountUpdateError } = await client
     .from("accounts")

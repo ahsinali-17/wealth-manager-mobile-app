@@ -31,6 +31,7 @@ const RESPONSE_SCHEMA = {
       nullable: true,
     },
   },
+  required: ["amount", "category", "type", "transcript", "date", "description"],
 };
 
 async function callGemini(

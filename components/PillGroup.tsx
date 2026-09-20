@@ -26,7 +26,7 @@ export default function PillGroup({
           <TouchableOpacity
             key={ele.key}
             onPress={() => onChange(ele.key)}
-            className={`flex-row items-center justify-center px-2 py-1 rounded-full ${currentValue === ele.key ? "bg-black" : "bg-white"} border border-brand-text-secondary`}
+            className={`flex-row items-center justify-center px-3 py-1.5 rounded-full ${currentValue === ele.key ? "bg-black" : "bg-white"} border border-brand-text-secondary`}
           >
             {ele.icon && (
               <Text

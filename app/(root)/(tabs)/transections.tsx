@@ -14,6 +14,7 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from "react-native";
 import {
@@ -130,10 +131,11 @@ export default function transections() {
     if (search.length == 0) {
       return transactionData;
     }
-    return transactionData.filter((tr) => {
-      tr?.description?.toLowerCase().includes(search.toLowerCase()) ||
-        tr.category?.toLowerCase().includes(search.toLowerCase());
-    });
+    return transactionData.filter(
+      (tr) =>
+        tr?.description?.toLowerCase().includes(search.toLowerCase()) ||
+        tr.category?.toLowerCase().includes(search.toLowerCase()),
+    );
   }, [search, transactionData]);
 
   const dailyIncomeExpense = useMemo(() => {
@@ -155,6 +157,9 @@ export default function transections() {
       ];
     });
   }, [transactionData]);
+
+  const { width: screenWidth } = useWindowDimensions();
+  const chartViewportWidth = screenWidth - 70;
 
   return (
     <SafeAreaView className="flex-1 bg-brand-body" edges={["top"]}>
@@ -279,8 +284,8 @@ export default function transections() {
           }
           ListHeaderComponent={
             transactionData.length > 0 ? (
-              <View className="bg-white roundd-2xl px-3 py-2 mb-3">
-                <View className="flex-row justify-between items-center">
+              <View className="bg-white rounded-2xl p-3 mb-3 overflow-hidden">
+                <View className="flex-row justify-between items-center mb-2">
                   <Text className="text-lg font-semibold text-brand-bg">
                     Daily Income vs Expense
                   </Text>
@@ -302,17 +307,20 @@ export default function transections() {
 
                 <BarChart
                   data={dailyIncomeExpense}
-                  width={Math.max(dailyIncomeExpense.length * 9, 280)}
+                  width={chartViewportWidth}
                   height={120}
-                  barWidth={6}
+                  barWidth={8}
                   spacing={4}
-                  hideYAxisText={false}
-                  yAxisTextStyle={{ fontSize: 8, color: "#8aea7b" }}
+                  initialSpacing={10}
+                  endSpacing={15}
+                  hideYAxisText={true}
+                  yAxisTextStyle={{ fontSize: 8, color: "#2f1cd6" }}
                   rulesColor="#8c8e84"
                   noOfSections={3}
                   xAxisLabelTextStyle={{ color: "#8A8D96", fontSize: 7 }}
                   isThreeD={false}
                   roundedTop
+                  scrollToEnd={true}
                 />
               </View>
             ) : null
