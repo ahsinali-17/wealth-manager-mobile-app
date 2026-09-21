@@ -59,15 +59,17 @@ async function callGemini(
     throw new Error(`Gemini API request failed: ${text}`);
   }
   const data = await res.json();
-  if (
-    !data.candidates ||
-    !data.candidates[0].content ||
-    !data.candidates[0].content.parts
-  ) {
-    throw new Error("Invalid response from Gemini API");
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) {
+    throw new Error(
+      `Invalid response from Gemini API${
+        data?.promptFeedback?.blockReason
+          ? `: blocked (${data.promptFeedback.blockReason})`
+          : ""
+      }`,
+    );
   }
-  const text = data.candidates[0].content.parts[0].text;
-  return JSON.parse(text) as ExtractedTransaction;
+  return text as ExtractedTransaction;
 }
 
 export async function extractTransactionFromReciept(
